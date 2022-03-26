@@ -5,6 +5,8 @@ const ExpensesData = require("../schemas/expense");
 const Users = require("../schemas/users");
 const authenticateToken = require("../middleware/middleware");
 const signJWT = require("../signJWT/signJWT");
+const compareSync = require('../bcrypt/compareSync')
+const hashSync = require('../bcrypt/hashSync')
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -15,14 +17,16 @@ router.post("/login", async (req, res) => {
       .send({ mssg: "Bad request, please verify your inputs" })
       .end();
   } else {
-    const userFinned = await Users.findOne({ email, password }).exec();
-    if (userFinned === null) {
+    // Load hash from your password DB.
+    const userFinned = await Users.findOne({ email }).exec();
+    const passwordCompare = compareSync(password, userFinned.password)
+    
+    if (!passwordCompare) {
       res
         .status(404)
         .send({ mssg: `user with ${email} or password incorrect` });
     } else {
-      const token = signJWT({ email });
-
+      const token = signJWT({ email }, "2h");
       res.status(200).send({ token });
     }
   }
@@ -30,10 +34,11 @@ router.post("/login", async (req, res) => {
 
 router.post("/register", async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
+  const hash = hashSync(password);
   const registerUser = new Users({
     name,
     email,
-    password,
+    password: hash,
   });
 
   if (
@@ -83,6 +88,7 @@ router.post("/income", authenticateToken, async (req, res) => {
     product,
     income,
   });
+
   if (typeof product !== "string" || typeof income !== "number") {
     res.status(400).send({ mssg: "Bad request. Verify your inputs" }).end();
   } else {
@@ -101,6 +107,7 @@ router.post("/income", authenticateToken, async (req, res) => {
 
 router.get("/income/:id", authenticateToken, async (req, res) => {
   const id = req.params.id;
+
   try {
     //search data with id
     const findedObject = await IncomeData.findById(id).exec();
@@ -156,6 +163,7 @@ router.post("/expense", authenticateToken, async (req, res) => {
     product,
     expense,
   });
+
   if (typeof product !== "string" || typeof expense !== "number") {
     res.status(400).send({ mssg: "Bad request. Verify your inputs" }).end();
   } else {
@@ -174,6 +182,7 @@ router.post("/expense", authenticateToken, async (req, res) => {
 
 router.get("/expense/:id", authenticateToken, async (req, res) => {
   const id = req.params.id;
+
   try {
     //search data with id
     const findedObject = await ExpensesData.findById(id).exec();
@@ -208,6 +217,7 @@ router.put("/expense/:id", authenticateToken, async (req, res) => {
 
 router.delete("/expense/:id", authenticateToken, (req, res) => {
   const id = req.params.id;
+
   if (id === "") {
     res.status(404).send({ mssg: "Not found" });
   } else {

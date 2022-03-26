@@ -2,11 +2,11 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const secret = process.env.SECRET_PASSWORD;
 
-const signJWT = (loginData) => {
+const signJWT = (loginData, time) => {
     return jwt.sign(
         loginData,
         secret,
-        { expiresIn: "24h" },
+        { expiresIn: time },
         { algorithm: "RS256" }
       );
 }

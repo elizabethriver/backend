@@ -3,7 +3,7 @@ require("dotenv").config();
 const router = require("./routes/index");
 const express = require("express");
 const mongoose = require("mongoose");
-const mongoString = process.env.DATABASE_PRODUCTION;
+const mongoString = process.env.DATABASE_PRODUCTION || process.env.DATABASE_LOCAL;
 
 main().catch((err) => {throw new Error(err)});
 

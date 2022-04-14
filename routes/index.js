@@ -10,7 +10,7 @@ const hashSync = require('../bcrypt/hashSync')
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
+  console.log(req.body)
   if (typeof email !== "string" || typeof password !== "string") {
     res
       .status(400)

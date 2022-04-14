@@ -19,7 +19,9 @@ router.post("/login", async (req, res) => {
   } else {
     // Load hash from your password DB.
     const userFinned = await Users.findOne({ email }).exec();
+    console.log(userFinned)
     const passwordCompare = compareSync(password, userFinned.password)
+    console.log(passwordCompare)
     
     if (!passwordCompare) {
       res

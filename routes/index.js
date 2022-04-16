@@ -10,7 +10,6 @@ const hashSync = require('../bcrypt/hashSync')
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body)
   if (typeof email !== "string" || typeof password !== "string") {
     res
       .status(400)
@@ -19,14 +18,12 @@ router.post("/login", async (req, res) => {
   } else {
     // Load hash from your password DB.
     const userFinned = await Users.findOne({ email }).exec();
-    console.log(userFinned)
-    console.log(userFinned.password, password)
+
     const passwordCompare = compareSync(password, userFinned.password)
-    console.log(passwordCompare)
     
     if (!passwordCompare) {
       res
-        .status(404)
+        .status(400)
         .send({ mssg: `user with ${email} or password incorrect` });
     } else {
       const token = signJWT({ email }, "2h");
@@ -62,7 +59,7 @@ router.post("/register", async (req, res) => {
       const userFinned = await Users.findOne({ email }).exec();
       if (userFinned) {
         res
-          .status(404)
+          .status(422)
           .send({ mssg: `${email} already exists` })
           .end();
       } else {
@@ -97,7 +94,7 @@ router.post("/income", authenticateToken, async (req, res) => {
   } else {
     const userFinned = await IncomeData.findOne({ product }).exec();
     if (userFinned !== null) {
-      res.status(404).send({
+      res.status(422).send({
         mssg: `product with name ${product} already exists`,
       });
     } else {
@@ -172,7 +169,7 @@ router.post("/expense", authenticateToken, async (req, res) => {
   } else {
     const productFind = await ExpensesData.findOne({ product }).exec();
     if (productFind !== null) {
-      res.status(404).send({
+      res.status(422).send({
         mssg: `product with name ${product} already exists`,
       });
     } else {
@@ -191,7 +188,7 @@ router.get("/expense/:id", authenticateToken, async (req, res) => {
     const findedObject = await ExpensesData.findById(id).exec();
     res.status(200).send({ findedObject });
   } catch (error) {
-    res.status(400).send({ mssg: "ID does not exist" });
+    res.status(404).send({ mssg: "ID does not exist" });
   }
 });
 

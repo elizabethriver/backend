@@ -10,7 +10,6 @@ const hashSync = require("../bcrypt/hashSync");
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password);
   if ((email === "", password === "")) {
     res.status(400).send({ mssg: "Empty inputs" }).end();
   } else {
@@ -26,7 +25,7 @@ router.post("/login", async (req, res) => {
             .send({ mssg: `user with ${email} not found` })
             .end();
         }
-        const {name} = userFinned
+        const { name } = userFinned;
         const passwordCompare = compareSync(password, userFinned.password);
         if (!passwordCompare) {
           res
@@ -35,10 +34,10 @@ router.post("/login", async (req, res) => {
             .end();
         } else {
           const token = signJWT({ email }, "2h");
-          res.status(200).send({ token, name}).end();
+          res.status(200).send({ token, name }).end();
         }
       } catch (error) {
-          throw error
+        throw error;
       }
     }
   }

@@ -5,29 +5,41 @@ const ExpensesData = require("../schemas/expense");
 const Users = require("../schemas/users");
 const authenticateToken = require("../middleware/middleware");
 const signJWT = require("../signJWT/signJWT");
-const compareSync = require('../bcrypt/compareSync')
-const hashSync = require('../bcrypt/hashSync')
+const compareSync = require("../bcrypt/compareSync");
+const hashSync = require("../bcrypt/hashSync");
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  if (typeof email !== "string" || typeof password !== "string") {
-    res
-      .status(400)
-      .send({ mssg: "Bad request, please verify your inputs" })
-      .end();
+  console.log(email, password);
+  if ((email === "", password === "")) {
+    res.status(400).send({ mssg: "Empty inputs" }).end();
   } else {
-    // Load hash from your password DB.
-    const userFinned = await Users.findOne({ email }).exec();
-
-    const passwordCompare = compareSync(password, userFinned.password)
-    
-    if (!passwordCompare) {
-      res
-        .status(400)
-        .send({ mssg: `user with ${email} or password incorrect` });
+    if (typeof email !== "string" || typeof password !== "string") {
+      res.status(400).send({ mssg: "Bad request" }).end();
     } else {
-      const token = signJWT({ email }, "2h");
-      res.status(200).send({ token });
+      // Load hash from your password DB.
+      try {
+        const userFinned = await Users.findOne({ email }).exec();
+        if (userFinned === null) {
+          res
+            .status(400)
+            .send({ mssg: `user with ${email} not found` })
+            .end();
+        }
+        const {name} = userFinned
+        const passwordCompare = compareSync(password, userFinned.password);
+        if (!passwordCompare) {
+          res
+            .status(400)
+            .send({ mssg: `user with ${email} has a password incorrect` })
+            .end();
+        } else {
+          const token = signJWT({ email }, "2h");
+          res.status(200).send({ token, name}).end();
+        }
+      } catch (error) {
+          throw error
+      }
     }
   }
 });

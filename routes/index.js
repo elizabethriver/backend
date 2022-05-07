@@ -11,7 +11,7 @@ const hashSync = require("../bcrypt/hashSync");
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   if (email === "" || password === "") {
-    res.status(400).send({ mssg: "Empty inputs" }).end();
+    res.status(400).send({ mssg: "Empty inputs" });
   } else {
     if (typeof email !== "string" || typeof password !== "string") {
       res
@@ -85,6 +85,7 @@ router.post("/register", async (req, res) => {
               .status(422)
               .send({ mssg: `${email} already exists` })
               .end();
+            
           } else {
             registerUser.save(() => {
               res.status(200).send({ registerUser }).end();
@@ -130,7 +131,6 @@ router.post("/income", authenticateToken, async (req, res) => {
             .send({
               mssg: `product with name ${product} already exists`,
             })
-            .end();
         } else {
           registerIncome.save(function () {
             res.status(200).send({ registerIncome }).end();
@@ -155,6 +155,7 @@ router.get("/income/:id", authenticateToken, async (req, res) => {
         .status(404)
         .send({ mssg: `product ID ${id} does not exist` })
         .end();
+
     } else {
       res.status(200).send({ findedObject }).end();
     }
@@ -187,6 +188,7 @@ router.put("/income/:id", authenticateToken, async (req, res) => {
             .status(404)
             .send({ mssg: `Product with ID ${id} does not exist` })
             .end();
+          
         } else {
           res.status(200).send({ docUpdate }).end();
         }
@@ -211,6 +213,7 @@ router.delete("/income/:id", authenticateToken, (req, res) => {
           .status(404)
           .send({ msg: `Docs with ID ${id} doesn't exist` })
           .end();
+       
       } else {
         res.status(200).send({ docs }).end();
       }
@@ -239,6 +242,7 @@ router.post("/expense", authenticateToken, async (req, res) => {
             mssg: `product with name ${product} already exists`,
           })
           .end();
+      
       } else {
         registerExpenses.save(() => {
           res.status(200).send(registerExpenses).end();
@@ -262,6 +266,7 @@ router.get("/expense/:id", authenticateToken, async (req, res) => {
         .status(404)
         .send({ mssg: `product ID ${id} does not exist` })
         .end();
+   
     } else {
       res.status(200).send({ findedObject }).end();
     }
@@ -294,6 +299,7 @@ router.put("/expense/:id", authenticateToken, async (req, res) => {
           .status(404)
           .send({ mssg: `Product with ID ${id} does not exist` })
           .end();
+   
       } else {
         res.status(200).send({ docUpdate }).end();
       }
@@ -317,6 +323,7 @@ router.delete("/expense/:id", authenticateToken, (req, res) => {
           .status(404)
           .send({ msg: `Docs with ID ${id} doesn't exist` })
           .end();
+       
       } else {
         res.status(200).send({ docs }).end();
       }    }

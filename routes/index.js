@@ -40,7 +40,7 @@ router.post("/login", async (req, res) => {
           res.status(200).send({ token, name }).end();
         }
       } catch (error) {
-        res.status(404).send({ mssg: error }).end();
+        // res.status(404).send({ mssg: error }).end();
         throw error;
       }
     }
@@ -91,7 +91,7 @@ router.post("/register", async (req, res) => {
             });
           }
         } catch (error) {
-          res.status(404).send({ mssg: error }).end();
+          // res.status(404).send({ mssg: error }).end();
           throw error;
         }
       }
@@ -105,7 +105,7 @@ router.get("/dashboard", authenticateToken, async (res) => {
     const expensesAll = await ExpensesData.find({});
     res.status(200).send({ incomeAll, expensesAll }).end();
   } catch (error) {
-    res.status(404).send({ mssg: error }).end();
+    // res.status(404).send({ mssg: error }).end();
     throw error;
   }
 });
@@ -134,7 +134,7 @@ router.post("/income", authenticateToken, async (req, res) => {
           });
         }
       } catch (error) {
-        res.status(404).send({ mssg: error }).end();
+        // res.status(404).send({ mssg: error }).end();
         throw error;
       }
     }
@@ -156,7 +156,7 @@ router.get("/income/:id", authenticateToken, async (req, res) => {
       res.status(200).send({ findedObject }).end();
     }
   } catch (error) {
-    res.status(404).send({ mssg: error }).end();
+    // res.status(404).send({ mssg: error }).end();
     throw error;
   }
 });
@@ -188,7 +188,7 @@ router.put("/income/:id", authenticateToken, async (req, res) => {
           res.status(200).send({ docUpdate }).end();
         }
       } catch (error) {
-        res.status(404).send({ mssg: error }).end();
+        // res.status(404).send({ mssg: error }).end();
         throw error;
       }
     }
@@ -242,7 +242,7 @@ router.post("/expense", authenticateToken, async (req, res) => {
         });
       }
     } catch (error) {
-      res.status(404).send({ mssg: error }).end();
+      // res.status(404).send({ mssg: error }).end();
       throw error;
     }
   }
@@ -263,7 +263,7 @@ router.get("/expense/:id", authenticateToken, async (req, res) => {
       res.status(200).send({ findedObject }).end();
     }
   } catch (error) {
-    res.status(404).send({ mssg: error }).end();
+    // res.status(404).send({ mssg: error }).end();
     throw error;
   }
 });
@@ -295,7 +295,7 @@ router.put("/expense/:id", authenticateToken, async (req, res) => {
         res.status(200).send({ docUpdate }).end();
       }
     } catch (error) {
-      res.status(404).send({ mssg: error }).end();
+      // res.status(404).send({ mssg: error }).end();
       throw error;
     }
   }

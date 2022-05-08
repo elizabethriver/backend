@@ -8,10 +8,10 @@ const signJWT = require("../signJWT/signJWT");
 const compareSync = require("../bcrypt/compareSync");
 const hashSync = require("../bcrypt/hashSync");
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   if (email === "" || password === "") {
-    res.status(400).send({ mssg: "Empty inputs" });
+    res.status(400).send({ mssg: "Empty inputs" }).end();
   } else {
     if (typeof email !== "string" || typeof password !== "string") {
       res
@@ -40,14 +40,14 @@ router.post("/login", async (req, res) => {
           res.status(200).send({ token, name }).end();
         }
       } catch (error) {
-        // res.status(404).send({ mssg: error }).end();
+        res.status(404).send({ mssg: error }).end();
         throw error;
       }
     }
   }
 });
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
   const hash = hashSync(password);
   const registerUser = new Users({
@@ -91,7 +91,7 @@ router.post("/register", async (req, res) => {
             });
           }
         } catch (error) {
-          // res.status(404).send({ mssg: error }).end();
+          res.status(404).send({ mssg: error }).end();
           throw error;
         }
       }
@@ -99,18 +99,19 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.get("/dashboard", authenticateToken, async (res) => {
+router.get("/dashboard", authenticateToken, async (req, res, next) => {
   try {
     const incomeAll = await IncomeData.find({});
     const expensesAll = await ExpensesData.find({});
+    console.log(incomeAll, expensesAll);
     res.status(200).send({ incomeAll, expensesAll }).end();
   } catch (error) {
-    // res.status(404).send({ mssg: error }).end();
+    res.status(404).send({ mssg: error }).end();
     throw error;
   }
 });
 
-router.post("/income", authenticateToken, async (req, res) => {
+router.post("/income", authenticateToken, async (req, res, next) => {
   const { product, income } = req.body;
   const registerIncome = new IncomeData({
     product,
@@ -125,43 +126,43 @@ router.post("/income", authenticateToken, async (req, res) => {
       try {
         const userFinned = await IncomeData.findOne({ product }).exec();
         if (userFinned !== null) {
-          res.status(422).send({
-            mssg: `product with name ${product} already exists`,
-          });
+          res
+            .status(422)
+            .send({
+              mssg: `product with name ${product} already exists`,
+            })
+            .end();
         } else {
           registerIncome.save(function () {
             res.status(200).send({ registerIncome }).end();
           });
         }
       } catch (error) {
-        // res.status(404).send({ mssg: error }).end();
+        res.status(404).send({ mssg: error }).end();
         throw error;
       }
     }
   }
 });
 
-router.get("/income/:id", authenticateToken, async (req, res) => {
+router.get("/income/:id", authenticateToken, async (req, res, next) => {
   const id = req.params.id;
 
   try {
     //search data with id
     const findedObject = await IncomeData.findById(id).exec();
     if (findedObject === null) {
-      res
-        .status(404)
-        .send({ mssg: `product ID ${id} does not exist` })
-        .end();
+      res.status(404).send({ mssg: `product ID ${id} does not exist` });
     } else {
       res.status(200).send({ findedObject }).end();
     }
   } catch (error) {
-    // res.status(404).send({ mssg: error }).end();
+    res.status(404).send({ mssg: error }).end();
     throw error;
   }
 });
 
-router.put("/income/:id", authenticateToken, async (req, res) => {
+router.put("/income/:id", authenticateToken, async (req, res, next) => {
   const id = req.params.id;
   const { product, income } = req.body;
   if (product === "" || income === "") {
@@ -188,14 +189,14 @@ router.put("/income/:id", authenticateToken, async (req, res) => {
           res.status(200).send({ docUpdate }).end();
         }
       } catch (error) {
-        // res.status(404).send({ mssg: error }).end();
+        res.status(404).send({ mssg: error }).end();
         throw error;
       }
     }
   }
 });
 
-router.delete("/income/:id", authenticateToken, (req, res) => {
+router.delete("/income/:id", authenticateToken, (req, res, next) => {
   const id = req.params.id;
   //search data with id
   IncomeData.findByIdAndDelete(id, (error, docs) => {
@@ -215,7 +216,7 @@ router.delete("/income/:id", authenticateToken, (req, res) => {
   });
 });
 
-router.post("/expense", authenticateToken, async (req, res) => {
+router.post("/expense", authenticateToken, async (req, res, next) => {
   const { product, expense } = req.body;
   const registerExpenses = new ExpensesData({
     product,
@@ -225,7 +226,7 @@ router.post("/expense", authenticateToken, async (req, res) => {
     res.status(400).send({ mssg: "Empty inputs" }).end();
   }
   if (typeof product !== "string" || typeof expense !== "number") {
-    res.status(400).send({ mssg: "Bad request. Verify your inputs" }).end();
+    res.status(400).send({ mssg: "Bad request. Verify your inputs" });
   } else {
     try {
       const productFind = await ExpensesData.findOne({ product }).exec();
@@ -242,13 +243,13 @@ router.post("/expense", authenticateToken, async (req, res) => {
         });
       }
     } catch (error) {
-      // res.status(404).send({ mssg: error }).end();
+      res.status(404).send({ mssg: error }).end();
       throw error;
     }
   }
 });
 
-router.get("/expense/:id", authenticateToken, async (req, res) => {
+router.get("/expense/:id", authenticateToken, async (req, res, next) => {
   const id = req.params.id;
 
   try {
@@ -260,15 +261,15 @@ router.get("/expense/:id", authenticateToken, async (req, res) => {
         .send({ mssg: `product ID ${id} does not exist` })
         .end();
     } else {
-      res.status(200).send({ findedObject }).end();
+      res.status(200).send({ findedObject });
     }
   } catch (error) {
-    // res.status(404).send({ mssg: error }).end();
+    res.status(404).send({ mssg: error }).end();
     throw error;
   }
 });
 
-router.put("/expense/:id", authenticateToken, async (req, res) => {
+router.put("/expense/:id", authenticateToken, async (req, res, next) => {
   const id = req.params.id;
   const { product, expense } = req.body;
   if (product === "" || income === "") {
@@ -295,13 +296,13 @@ router.put("/expense/:id", authenticateToken, async (req, res) => {
         res.status(200).send({ docUpdate }).end();
       }
     } catch (error) {
-      // res.status(404).send({ mssg: error }).end();
+      res.status(404).send({ mssg: error }).end();
       throw error;
     }
   }
 });
 
-router.delete("/expense/:id", authenticateToken, (req, res) => {
+router.delete("/expense/:id", authenticateToken, (req, res, next) => {
   const id = req.params.id;
   //search data with id
   ExpensesData.findByIdAndDelete(id, (error) => {

@@ -103,7 +103,6 @@ router.get("/dashboard", authenticateToken, async (req, res, next) => {
   try {
     const incomeAll = await IncomeData.find({});
     const expensesAll = await ExpensesData.find({});
-    console.log(incomeAll, expensesAll);
     res.status(200).send({ incomeAll, expensesAll }).end();
   } catch (error) {
     res.status(404).send({ mssg: error }).end();

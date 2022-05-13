@@ -26,3 +26,5 @@
 {"v":0,"level":30,"name":"newrelic","hostname":"LAPTOP-KI8JF2DM","pid":8856,"time":"2022-05-13T13:50:30.252Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":83}}"}
 {"v":0,"level":30,"name":"newrelic","hostname":"LAPTOP-KI8JF2DM","pid":8856,"time":"2022-05-13T13:50:30.259Z","msg":"Agent state changed from connected to started."}
 {"v":0,"level":30,"name":"newrelic","hostname":"LAPTOP-KI8JF2DM","pid":8856,"time":"2022-05-13T13:50:31.259Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":40,"name":"newrelic","hostname":"LAPTOP-KI8JF2DM","pid":8856,"time":"2022-05-13T15:47:40.021Z","msg":"Merging 1 of 1 events into SpanEventAggregator for next harvest","component":"event_aggregator"}
+{"v":0,"level":40,"name":"newrelic","hostname":"LAPTOP-KI8JF2DM","pid":8856,"time":"2022-05-13T16:10:35.737Z","msg":"Merging 3 of 3 events into SpanEventAggregator for next harvest","component":"event_aggregator"}

@@ -221,7 +221,7 @@ router.post("/expense", authenticateToken, async (req, res, next) => {
     product,
     expense,
   });
-  if (product === "" || income === "") {
+  if (product === "" || expense === "") {
     res.status(400).send({ mssg: "Empty inputs" }).end();
   }
   if (typeof product !== "string" || typeof expense !== "number") {
@@ -271,7 +271,7 @@ router.get("/expense/:id", authenticateToken, async (req, res, next) => {
 router.put("/expense/:id", authenticateToken, async (req, res, next) => {
   const id = req.params.id;
   const { product, expense } = req.body;
-  if (product === "" || income === "") {
+  if (product === "" || expense === "") {
     res.status(400).send({ mssg: "Empty inputs" }).end();
   }
   if (typeof product !== "string" || typeof expense !== "number") {
@@ -304,7 +304,7 @@ router.put("/expense/:id", authenticateToken, async (req, res, next) => {
 router.delete("/expense/:id", authenticateToken, (req, res, next) => {
   const id = req.params.id;
   //search data with id
-  ExpensesData.findByIdAndDelete(id, (error) => {
+  ExpensesData.findByIdAndDelete(id, (error, docs) => {
     if (error) {
       res.status(404).send({ error }).end();
       throw error;
